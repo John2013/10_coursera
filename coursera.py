@@ -55,11 +55,11 @@ def output_courses_info_to_xlsx(courses_list, filepath='courses.xlsx'):
 
 
 if __name__ == '__main__':
-    COURSES_COUNT = 20
+    courses_count = 20
 
     courses_links = get_random_courses_list(
         'https://www.coursera.org/sitemap~www~courses.xml',
-        COURSES_COUNT
+        courses_count
     )
 
     if len(sys.argv) > 1:
