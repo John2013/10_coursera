@@ -23,7 +23,7 @@ def get_course_info(course_link):
     date_begin = soup.find('div', {'class': 'rc-StartDateString'}).text
     weeks_count = len(soup.select(".rc-WeekView > .week"))
     ratings = soup.select('.ratings-text.bt3-hidden-xs > span')
-    if len(ratings) > 0:
+    if ratings:
         ratings = float(ratings[0].text[-3:])
     else:
         ratings = None
@@ -55,9 +55,11 @@ def output_courses_info_to_xlsx(courses_list, filepath='courses.xlsx'):
 
 
 if __name__ == '__main__':
+    COURSES_COUNT = 20
+
     courses_links = get_random_courses_list(
         'https://www.coursera.org/sitemap~www~courses.xml',
-        20
+        COURSES_COUNT
     )
 
     if len(sys.argv) > 1:
