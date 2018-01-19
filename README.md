@@ -18,6 +18,9 @@ Remember, it is recommended to use [virtualenv/venv](https://devman.org/encyclop
 Example:
 ```bash
 $ python coursera.py <result_file_path(default:'courses.xlsx')>
+Готово!
+Результат в файле:
+C:\Users\Me\PythonProjects\10_coursera\courses.xlsx
 ```
 
 The process will take several tens of seconds.

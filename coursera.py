@@ -1,21 +1,26 @@
 import random
+from os.path import realpath
+
+from pyexcel_xlsxw import save_data
+
 import requests
 import sys
 from lxml import etree
 from bs4 import BeautifulSoup
-import pandas as pd
+
+
+def get_web_content(url):
+    return requests.get(url).content
 
 
 def get_random_courses_list(url, courses_amount):
-    xml_request = requests.get(url)
-    root = etree.XML(xml_request.content)
-    courses_list = [link.text for child in root for link in child]
+    xml_root = etree.XML(get_web_content(url))
+    courses_list = [link.text for child in xml_root for link in child]
     return random.sample(courses_list, courses_amount)
 
 
 def get_course_info(course_link):
-    course_request = requests.get(course_link)
-    soup = BeautifulSoup(course_request.content, 'html.parser')
+    soup = BeautifulSoup(get_web_content(course_link), 'html.parser')
     title = soup.select(
         '.rc-PhoenixCdpBanner .header-container .title'
     )[0].text
@@ -27,31 +32,12 @@ def get_course_info(course_link):
         ratings = float(ratings[0].text[-3:])
     else:
         ratings = None
-    return {
-        "title": title,
-        "language": language,
-        "date_begin": date_begin,
-        "weeks_count": weeks_count,
-        "ratings": ratings
-    }
+
+    return title, language, date_begin, weeks_count, ratings
 
 
 def output_courses_info_to_xlsx(courses_list, filepath='courses.xlsx'):
-    courses_table = pd.DataFrame(
-        courses_list,
-        columns=[
-            'title',
-            'language',
-            'date_begin',
-            'weeks_count',
-            'ratings',
-        ]
-    )
-    courses_table = courses_table.set_index('title')
-
-    writer = pd.ExcelWriter(filepath)
-    courses_table.to_excel(writer, 'Courses')
-    writer.save()
+    save_data(filepath, {"Random courses": courses_list})
 
 
 if __name__ == '__main__':
@@ -67,8 +53,17 @@ if __name__ == '__main__':
     else:
         filepath = 'courses.xlsx'
 
-    courses_list = []
+    courses_list = [
+        [
+            'title',
+            'language',
+            'date_begin',
+            'weeks_count',
+            'ratings',
+        ],
+    ]
     for course_link in courses_links:
         courses_list.append(get_course_info(course_link))
 
     output_courses_info_to_xlsx(courses_list, filepath)
+    print("Готово!\nРезультат в файле:\n{}".format(realpath(filepath)))
