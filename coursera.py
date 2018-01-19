@@ -33,7 +33,7 @@ def get_course_info(course_link):
     else:
         ratings = None
 
-    return title, language, date_begin, weeks_count, ratings
+    return [title, language, date_begin, weeks_count, ratings]
 
 
 def output_courses_info_to_xlsx(courses_list, filepath='courses.xlsx'):
@@ -59,7 +59,7 @@ if __name__ == '__main__':
             'language',
             'date_begin',
             'weeks_count',
-            'ratings',
+            'ratings'
         ],
     ]
     for course_link in courses_links:
